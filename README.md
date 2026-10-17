@@ -5,6 +5,9 @@ idea a chapter: values and functions, patterns, collections, laziness,
 effects and errors, types, modules, processes, testing, and a service built
 from all of them.
 
+**Read it at [dream-mindv2.github.io/learn](https://dream-mindv2.github.io/learn/)**, rebuilt on every
+push and daily, its examples run against the current compiler and library.
+
 Every example in it is a whole program. The site is built by `mind docs`,
 which compiles and runs each one and puts what it printed under it, so the
 output on the page is the output the program printed. Names in code are
