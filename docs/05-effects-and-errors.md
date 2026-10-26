@@ -40,7 +40,7 @@ import std.file;
 let main! = {
     let path = "/tmp/learn-dream-notes.txt";
     file.write! path "first line\nsecond line\n"
-    let text = file.read! path;
+    let text = Option.expect! "cannot read notes" (file.read! path);
     console.print! ("read back " + to_string (len text) + " bytes")
     console.print! text
 };
