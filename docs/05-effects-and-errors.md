@@ -80,9 +80,9 @@ import std.console;
 import std.num;
 
 let parse_age text = match num.parse_int text {
-    () => Result.error ("not a number: " + text),
-    n if n < 0 => Result.error "an age cannot be negative",
-    n => Result.ok n,
+    Option.none => Result.error ("not a number: " + text),
+    Option.some(n) if n < 0 => Result.error "an age cannot be negative",
+    Option.some(n) => Result.ok n,
 };
 
 let main! = {
@@ -99,7 +99,7 @@ last so they chain with `|>`:
 import std.console;
 import std.num;
 
-let parse text = match num.parse_int text { () => Result.error ("not a number: " + text), n => Result.ok n };
+let parse text = match num.parse_int text { Option.none => Result.error ("not a number: " + text), Option.some(n) => Result.ok n };
 
 let main! = {
     console.print! (to_string (parse "21" |> Result.map (fn n -> n * 2)))
@@ -119,7 +119,7 @@ runs:
 import std.console;
 import std.num;
 
-let parse text = match num.parse_int text { () => Result.error ("not a number: " + text), n => Result.ok n };
+let parse text = match num.parse_int text { Option.none => Result.error ("not a number: " + text), Option.some(n) => Result.ok n };
 
 let ratio top bottom = {
     let? a = parse top;
