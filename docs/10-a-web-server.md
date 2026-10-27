@@ -17,8 +17,8 @@ import std.http.server;
 
 let hello req = http.text "hello, world";
 let greet req = match http.param "name" req {
-    () => http.respond 400 "whom should I greet?",
-    name => http.text ("hello, " + name),
+    Option.none => http.respond 400 "whom should I greet?",
+    Option.some(name) => http.text ("hello, " + name),
 };
 
 let app = server.router
@@ -35,9 +35,9 @@ let main! = {
 ```
 
 Port `0` asks the system for any free port, and `server.local_url` says which
-it got. `http.param` answers `()` when the route has no such parameter, and
-its signature says so, so the compiler insists `greet` handle it: past the
-`()` arm, `name` is known to be a string. The handlers are pure: they take a request and answer a response.
+it got. `http.param` answers an `Option`: `Option.none` when the route has no such
+parameter, and its signature says so, so the compiler insists `greet` handle
+it. Inside the `Option.some(name)` arm, `name` is known to be a string. The handlers are pure: they take a request and answer a response.
 The server does the waiting, the reading and the writing, one process per
 connection, so a slow client holds up nobody else.
 
@@ -50,15 +50,16 @@ what it was asked for answers a 404, the same way it answers anything else:
 import std.console;
 import std.http;
 import std.http.server;
+import std.map;
 
 let books = %{
     "1" => %{ "title" => "Structure and Interpretation", "year" => 1985 },
     "2" => %{ "title" => "The Little Schemer", "year" => 1974 },
 };
 
-let book req = match books.[http.param "id" req else ()] {
-    () => http.respond 404 "no such book",
-    found => http.json found,
+let book req = match Option.and_then (fn id -> map.lookup id books) (http.param "id" req) {
+    Option.none => http.respond 404 "no such book",
+    Option.some(found) => http.json found,
 };
 
 let app = server.router |> server.get "/books/:id" book;
